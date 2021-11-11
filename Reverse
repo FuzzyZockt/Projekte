@@ -1,0 +1,34 @@
+import java.util.Scanner;
+
+public class reversing {
+	String input;
+	String output = "";
+	Scanner sc = new Scanner(System.in);
+	int y;
+	
+	public reversing(){
+		Change();
+	}
+	
+	
+	
+	public void Change(){
+		System.out.println("----- Input -----");
+		System.out.print("Dezimal: ");
+		int x = sc.nextInt();
+		input = Integer.toString(x, 2);
+		System.out.println("Binär:\t " + input + "\n\n----- Output -----");
+		
+		for(int i = input.length() - 1; i >= 0 ; i--) {
+			output += input.charAt(i);
+		}
+			y = Integer.valueOf(output, 2);
+			input = Integer.toString(y, 10);
+		
+			System.out.println("Dezimal: " + input + "\nBinär:\t " + output);
+	}
+	
+	public static void main(String[] args) {
+		reversing t = new reversing();
+	}
+}
