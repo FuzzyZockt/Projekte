@@ -1,0 +1,22 @@
+import java.util.Scanner;
+
+public class Geldwechsel {
+	
+	public Geldwechsel() {
+		Scanner sc = new Scanner(System.in);
+		int[] coins = new int[] {200, 100, 50, 20, 10, 5, 2, 1};
+		int coinAmount = 0;
+		int recentCoin;
+		int money = sc.nextInt();
+		
+		for(int i = 0; i < coins.length && money > 0; i++) {
+			recentCoin = coins[i];
+			coinAmount = money / recentCoin;
+			money = money - (coinAmount * recentCoin);
+			System.out.println("Münzenwert: " + recentCoin + "\tAnzahl der Münzen: " + coinAmount + " \tRest: " + money);
+		}
+	}
+	public static void main(String[] args) {
+		new Geldwechsel();
+	}
+}
