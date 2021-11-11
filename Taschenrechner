@@ -1,0 +1,111 @@
+import java.util.*;
+
+public class Taschenrechner {
+	private Scanner sc = new Scanner(System.in);
+	
+	public Taschenrechner() {
+		menu();
+	}
+	
+	public void menu() {
+		System.out.println("--- Taschenrechner ---");
+		System.out.println("1 = Addieren");
+		System.out.println("2 = Subtrahieren");
+		System.out.println("3 = Multiplizieren");
+		System.out.println("4 = Dividieren");
+		System.out.println("0 = Beenden");
+		
+		double mainInput = sc.nextDouble();
+		
+		if(mainInput == 1) {
+			add();
+		} else if(mainInput == 2) {
+			sub();
+		} else if(mainInput == 3) {
+			mult();
+		} else if(mainInput == 4) {
+			div();
+		} else if(mainInput == 0) {
+			end();
+		} else {
+			System.out.println("Diese Zahl wird nicht unterstützt");
+			end();
+		}
+	}
+	
+	public void add() {
+		double equal;
+		
+		System.out.println("\r--- Addieren ---");
+		System.out.println("Zum Addieren bitte 2 Zahlen schreiben");
+		System.out.print("1. Zahl: ");
+		double n1 = sc.nextDouble();
+		System.out.print("2. Zahl: ");
+		double n2 = sc.nextDouble();
+		
+		equal = n1 + n2;
+		
+		System.out.flush();
+		System.out.println("Das Ergebnis aus " + n1 + " + " + n2 + " = " + equal + "\r");
+		menu();
+	}
+
+	public void sub() {
+		double equal;
+		
+		System.out.println("\r--- Subtrahieren ---");
+		System.out.println("Zum Subtrahieren bitte 2 Zahlen schreiben");
+		System.out.print("1. Zahl: ");
+		double n1 = sc.nextDouble();
+		System.out.print("2. Zahl: ");
+		double n2 = sc.nextDouble();
+		
+		equal = n1 - n2;
+		
+		System.out.println("Das Ergebnis aus " + n1 + " - " + n2 + " = " + equal + "\r");
+		menu();
+	}
+	
+	public void mult() {
+		double equal;
+		
+		System.out.println("\r--- Multiplizieren ---");
+		System.out.println("Zum Multiplizieren bitte 2 Zahlen schreiben");
+		System.out.print("1. Zahl: ");
+		double n1 = sc.nextDouble();
+		System.out.print("2. Zahl: ");
+		double n2 = sc.nextDouble();
+		
+		equal = n1 * n2;
+		
+		System.out.println("Das Ergebnis aus " + n1 + " * " + n2 + " = " + equal + "\r");		
+		menu();
+	}
+
+	public void div() {
+
+		double equal;
+		
+		System.out.println("\r--- Dividieren ---");
+		System.out.println("Zum Dividieren bitte 2 Zahlen schreiben");
+		System.out.print("1. Zahl: ");
+		double n1 = sc.nextDouble();
+		System.out.print("2. Zahl: ");
+		double n2 = sc.nextDouble();
+		
+		equal = n1 / n2;
+		
+		System.out.println("Das Ergebnis aus " + n1 + " : " + n2 + " = " + equal + "\r");		
+		menu();
+	}
+
+	public void end() {
+		System.out.println("Schönen Tag noch!");
+		System.exit(0);
+	}
+	
+	public static void main(String[] args) {
+		
+		Taschenrechner t = new Taschenrechner();
+	}
+}
