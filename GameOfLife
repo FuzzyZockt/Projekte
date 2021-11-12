@@ -72,23 +72,23 @@ public class Game {
 		System.out.println();
 		
 		for(int i = 0; i < boardX; i++) {
-			for(int j = 0; j < boardY; j++) {
+			for(int a = 0; a < boardY; a++) {
 				for(int x = -1; x <= 1; x++) {
 					for(int y = -1; y <= 1; y++) {
-						if(board2[i][j].equals(alive) && x == 0 && y == 0) {
+						if(board2[i][a].equals(alive) && x == 0 && y == 0) {
 							amount--;
 						} 
-						if(i + x >= 0 && i + x < boardX && j + y >= 0 && j + y < boardY && board2[i + x][j + y].equals(alive)) {
+						if(i + x >= 0 && i + x < boardX && a + y >= 0 && a + y < boardY && board2[i + x][a + y].equals(alive)) {
 							amount++;
 						}	
 					}
 				}
-				if(amount == 3 && board2[i][j].equals(dead))
-					board[i][j] = alive;
-				else if(amount > 3 || amount < 2 && board2[i][j].equals(alive))
-					board[i][j] = dead;
+				if(amount == 3 && board2[i][a].equals(dead))
+					board[i][a] = alive;
+				else if(amount > 3 || amount < 2 && board2[i][a].equals(alive))
+					board[i][a] = dead;
 				else 
-					board[i][j] = board[i][j];
+					board[i][a] = board[i][a];
 				
 				amount = 0;
 			}
