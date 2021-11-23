@@ -1,0 +1,101 @@
+import java.util.*;
+
+public class Game {
+	private String[][] board;
+	private String dead;
+	private String alive;
+	private int boardX;
+	private int boardY;
+	private int posX; 
+	private int posY;
+	private int gen = 1;
+
+	
+	public Game(int boardY, int boardX) throws InterruptedException {
+		this.boardX = boardX;
+		this.boardY = boardY;
+		dead = "*";
+		alive = "X";
+		board = new String[boardX][boardY];
+		makeBoard();
+		
+		for(int i = 0; i < boardX; i++) {
+			for(int y = 0; y < boardY; y++) {
+				if(shouldSpawn()) {
+					createAlive(i, y);
+				}
+			}
+		}
+		for(int i = 0; i <= 100; i++) {
+			output();
+			choice();
+			gen++;
+			Thread.sleep(1000);
+		}
+	}
+	
+	public void makeBoard() {
+		for(int i = 0; i < boardX; i++) {
+			for(int y = 0; y < boardY; y++) {
+				board[i][y] = dead;
+			}
+		}
+	}
+	
+	public boolean shouldSpawn() {
+		boolean rng = Math.random() < 0.20;
+		return rng;
+	}
+	
+	public void createAlive(int posX, int posY) {
+		this.posX = posX; 
+		this.posY = posY;
+		board[posX][posY] = alive;
+	}
+	
+	public void output() {
+		System.out.println("Generation: " + gen);
+		System.out.println("------------------------------------------------------------------------------------------");
+		for(int i = 0; i < boardX; i++) {
+			for(int y = 0; y < boardY; y++) {
+				System.out.print(board[i][y]);
+			}
+			System.out.println();
+		}
+		System.out.println("------------------------------------------------------------------------------------------");
+	}
+	
+
+	public void choice() {
+		int amount = 0;
+		String[][] board2 = Arrays.stream(board).map(String[]::clone).toArray(String[][]::new); //stackoverflow.com copy to get a identical Array
+		System.out.println();
+		
+		for(int i = 0; i < boardX; i++) {
+			for(int a = 0; a < boardY; a++) {
+				for(int x = -1; x <= 1; x++) {
+					for(int y = -1; y <= 1; y++) {
+						if(board2[i][a].equals(alive) && x == 0 && y == 0) {
+							amount--;
+						} 
+						if(i + x >= 0 && i + x < boardX && a + y >= 0 && a + y < boardY && board2[i + x][a + y].equals(alive)) {
+							amount++;
+						}	
+					}
+				}
+				if(amount == 3 && board2[i][a].equals(dead))
+					board[i][a] = alive;
+				else if(amount > 3 || amount < 2 && board2[i][a].equals(alive))
+					board[i][a] = dead;
+				else 
+					board[i][a] = board[i][a];
+				
+				amount = 0;
+			}
+		}
+	}
+	
+	public static void main(String[] args) throws InterruptedException {
+		new Game(90, 15);
+	}
+}
