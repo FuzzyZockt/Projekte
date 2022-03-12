@@ -4,45 +4,68 @@ import java.util.Scanner;
 public class Gacha {
 	private String[][] chart;
 	private Scanner sc;
-	private int rng1, rng2, pullAmount, hight, width, inputMenu;
+	private int rng1, rng2, pullAmount, hight, width, inputMenu, gems;
 	
-	public Gacha(int x, int y) {
+	public Gacha(int x, int y)  throws InterruptedException {
 		chart = new String[x][y]; 
 		sc = new Scanner(System.in);
-		hight = y - 1;
-		width = x - 1;
-	}
+		hight = y;
+		width = x;
+		gems = 68;
+		}
 	
-	public void menu() {
+	public void menu() throws InterruptedException {
 		System.out.println("------ Gatcha Simulator ------\n");
+		System.out.println("------ You have " + gems + " gems ------");
 		System.out.println("-- Press 1 to see the chart --");
 		System.out.println("------ Press 2 to pull -------");
+		System.out.println("------ Press 3 to quit -------");
 		inputMenu = sc.nextInt();
 		
 		switch(inputMenu) {
 			case 1:
 				getChart();
 				break;
+				
 			case 2:
-				System.out.println("---- Enter either 1 or 10 ----");
-				int x = sc.nextInt();
-				if(x >= 5) {
-					pullAmount = 10;
-					System.out.println("-- You are pulling 10 times --");
-				} else {
-					pullAmount = 1;
-					System.out.println("--- You are pulling 1 time ---");
-				}
-				x = 0;
-				
-				System.out.println("-Press 1 to continue the pull-");
-				x = sc.nextInt();
-				if(x == 1) {
-					pull(pullAmount);
-				} else {
+				if(gems == 0) {
+					System.out.println("Not enough gems!");
 					menu();
-				}
+				} else {
 				
+					System.out.println("---- Enter either 1 or 10 ----");
+					int x = sc.nextInt();
+					if(x >= 5 && gems >= 10) {
+						pullAmount = 10;
+						gems -= 10;
+						System.out.println("-- You are pulling 10 times --");
+						System.out.println("---- You will have " + gems +  " gems ----");
+					} else if (x < 5 && gems >= 1) {
+						pullAmount = 1;
+						gems -= 1;
+						System.out.println("--- You are pulling 1 time ---");
+						System.out.println("---- You will have " + gems +  " gems ----");
+					} else {
+						System.out.println("Not enough gems!");
+						menu();
+					}
+					x = 0;
+				
+					System.out.println("-Press 1 to continue the pull-");
+					x = sc.nextInt();
+					if(x == 1) {
+						pull(pullAmount);
+					} else
+						menu();
+					break;
+				}
+			case(3):
+				System.out.println("Goodbye!");
+				System.exit(0);
+				
+			default:
+				System.out.println("Wrong input!\n\n");
+				menu();
 				
 		}
 	}
@@ -52,10 +75,10 @@ public class Gacha {
 		chart[x][y] = a;
 	}
 	
-	public void getChart() {
+	public void getChart() throws InterruptedException {
 		
-		for(int y = 0; y <= hight; y++) {
-			for(int x = 0; x <= width; x++) {
+		for(int y = 0; y < hight; y++) {
+			for(int x = 0; x < width; x++) {
 				System.out.print(chart[x][y] + "\t");
 			}
 			System.out.println("");
@@ -63,7 +86,7 @@ public class Gacha {
 		menu();
 	}
 	
-	public void pull(int x) {
+	public void pull(int x) throws InterruptedException {
 		for(int i = 0; i < x; i++) {
 			rng1 = (int) (Math.random() * 100);
 			rng2 = (int) (Math.random() * 100);
@@ -105,17 +128,16 @@ public class Gacha {
 			else if(rng2 < 67 && rng2 >= 33)
 				System.out.println("SSR: " + chart[0][2]);
 			else if(rng2 < 33 && rng2 >= 0)
-				System.out.println("SSR: " + chart[0][3]);	
-			} else
-				System.out.println(rng1 + " is not available!");
+				System.out.println("SSR: " + chart[0][3]);
+			} else 
+					System.out.println(rng1 + " is not available!");
+			Thread.sleep(500);
 		}
 		System.out.println("");
 		menu();
 	}
 	
-	
-	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		Gacha t = new Gacha(5, 4);
 		t.autoAdd("SSR", 0, 0);
 		t.autoAdd("A", 0, 1);
