@@ -1,0 +1,405 @@
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import java.awt.BorderLayout;
+import javax.swing.JScrollPane;
+import java.awt.GridLayout;
+import javax.swing.JToggleButton;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.awt.event.ActionEvent;
+import net.miginfocom.swing.MigLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import javax.swing.JTable;
+import java.awt.Color;
+import javax.swing.JTextPane;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import java.awt.Font;
+import javax.swing.JProgressBar;
+import javax.swing.JMenuBar;
+
+public class Tonerverwaltung_Datenbank {
+	
+	private static Connection conn = null;
+	private static Connection conn1 = null;
+	private JFrame frame;
+	private JTable table;
+	private DefaultTableModel model;
+	private JTextField tonername;
+	private JTextField druckername;
+	private JTextField druckermodell;
+	private JTextField anzahl;
+	private JTextField barcode;
+	private JTextField id;
+	private String key;
+	private static Object[] row;
+	private static int rowAmount;
+
+	
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					row = new Object[6];
+					Tonerverwaltung_Datenbank window = new Tonerverwaltung_Datenbank();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+	public Tonerverwaltung_Datenbank() throws SQLException {
+		try {
+		    conn = DriverManager.getConnection("jdbc:mysql://localhost/tonerverwaltung?" +"user=admin & password=1234");
+
+		} catch (SQLException ex) {
+		    System.out.println("SQLException: " + ex.getMessage());
+		    System.out.println("SQLState: " + ex.getSQLState());
+		    System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 * @throws SQLException 
+	 */
+	private void initialize() throws SQLException  {
+
+		
+		frame = new JFrame();
+		frame.getContentPane().setBackground(Color.DARK_GRAY);
+		frame.setBounds(100, 100, 900,700);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 10, 866, 496);
+		frame.getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		table.setFocusable(true);
+		model = new DefaultTableModel();
+		Object[] column = {"ID", "Tonername", "Druckername", "Druckermodell", "Anzahl", "Bracode"};
+		model.setColumnIdentifiers(column);
+		table.setModel(model);
+		table.setBackground(Color.LIGHT_GRAY);
+		scrollPane.setViewportView(table);
+		
+		JLabel lblNewLabel_1 = new JLabel("Tonername");
+		lblNewLabel_1.setForeground(Color.WHITE);
+		lblNewLabel_1.setBackground(Color.WHITE);
+		lblNewLabel_1.setBounds(10, 548, 90, 13);
+		frame.getContentPane().add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Druckername");
+		lblNewLabel_2.setForeground(Color.WHITE);
+		lblNewLabel_2.setBounds(10, 571, 90, 13);
+		frame.getContentPane().add(lblNewLabel_2);
+		
+		JLabel lblNewLabel_3 = new JLabel("Druckermodell");
+		lblNewLabel_3.setForeground(Color.WHITE);
+		lblNewLabel_3.setBounds(10, 594, 90, 13);
+		frame.getContentPane().add(lblNewLabel_3);
+		
+		JLabel lblNewLabel_4 = new JLabel("Anzahl");
+		lblNewLabel_4.setForeground(Color.WHITE);
+		lblNewLabel_4.setBounds(10, 617, 90, 13);
+		frame.getContentPane().add(lblNewLabel_4);
+		
+		JLabel lblNewLabel_5 = new JLabel("Barcode");
+		lblNewLabel_5.setForeground(Color.WHITE);
+		lblNewLabel_5.setBounds(10, 640, 90, 13);
+		frame.getContentPane().add(lblNewLabel_5);
+		
+		tonername = new JTextField();
+		tonername.setBounds(110, 545, 96, 19);
+		frame.getContentPane().add(tonername);
+		tonername.setColumns(10);
+		
+		druckername = new JTextField();
+		druckername.setBounds(110, 568, 96, 19);
+		frame.getContentPane().add(druckername);
+		druckername.setColumns(10);
+		
+		druckermodell = new JTextField();
+		druckermodell.setBounds(110, 591, 96, 19);
+		frame.getContentPane().add(druckermodell);
+		druckermodell.setColumns(10);
+		
+		anzahl = new JTextField();
+		anzahl.setBounds(110, 614, 96, 19);
+		frame.getContentPane().add(anzahl);
+		anzahl.setColumns(10);
+		
+		barcode = new JTextField();
+		barcode.setBounds(110, 637, 96, 19);
+		frame.getContentPane().add(barcode);
+		barcode.setColumns(10);
+		
+		Statement st = conn.createStatement();
+		String sql = ("SELECT * FROM tonertabelle;");		
+		ResultSet rs = st.executeQuery(sql);
+		
+		JButton btnNewButton = new JButton("New");
+		btnNewButton.addActionListener(e -> {
+			update();
+			String tonername1 = tonername.getText();
+			String druckername1 = druckername.getText();
+			String druckermodell1 = druckermodell.getText();
+			String anzahl1 = anzahl.getText();
+			String barcode1 = barcode.getText();
+			
+			
+			String update = "INSERT INTO tonertabelle (Tonernname, Druckername, Druckmodell, Anzahl, Barcode)\r\n"
+					+ "VALUES ('"+tonername1+"', '"+druckername1+"', '"+druckermodell1+"', '"+anzahl1+"', '"+barcode1+"')";
+			Statement stm = null;
+			try {
+				stm = conn.createStatement();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				stm.execute(update);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			update();
+			JOptionPane.showMessageDialog(null, "Added successfully");
+			tonername.setText("");
+			druckername.setText("");
+			druckermodell.setText("");
+			anzahl.setText("");
+			barcode.setText("");
+			});
+		btnNewButton.setBounds(216, 636, 85, 21);
+		frame.getContentPane().add(btnNewButton);
+		
+		JLabel lblNewLabel = new JLabel("ID");
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setBounds(10, 516, 90, 13);
+		frame.getContentPane().add(lblNewLabel);
+		
+		id = new JTextField();
+		id.setBounds(110, 513, 96, 19);
+		frame.getContentPane().add(id);
+		id.setColumns(10);
+		
+		JButton btnNewButton_1 = new JButton("Remove");
+		btnNewButton_1.addActionListener(e -> {
+			int i = table.getSelectedRow();
+			System.out.println(i);
+			if(i >= 0 && model.getValueAt(i, 0).toString().equals(id.getText())) {
+				String update = "DELETE FROM tonertabelle WHERE id ='"+id.getText()+"'";
+				Statement stm = null;
+				try {
+					stm = conn.createStatement();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					stm.execute(update);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				update();
+				id.setText("");
+				JOptionPane.showMessageDialog(null,  "Deleted successfully");
+			} else {
+				JOptionPane.showMessageDialog(null,  "Select a row and enter an id");
+			}
+			
+		});
+		
+		btnNewButton_1.setBounds(217, 512, 85, 21);
+		frame.getContentPane().add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Clear");
+
+		btnNewButton_2.addActionListener(e -> {
+			update();
+			
+			while(rowAmount > 0) {
+				model.removeRow(rowAmount - 1);
+				rowAmount--;	
+			}
+		});
+		btnNewButton_2.setBounds(216, 590, 85, 21);
+		frame.getContentPane().add(btnNewButton_2);
+		
+		
+		JButton btnNewButton_3 = new JButton("Export");
+		btnNewButton_3.addActionListener(e -> {
+			update();
+			try {
+				LocalDateTime myObj = LocalDateTime.now();
+			    DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH.mm.ss");
+			    String formattedDate = myObj.format(myFormatObj);
+			    
+			    conn1 = DriverManager.getConnection("jdbc:mysql://localhost/tonerverwaltung?" +"user=admin & password=1234");
+				Statement st1 = conn1.createStatement();
+				String sql1 = ("SELECT * FROM tonertabelle;");		
+				ResultSet rs1 = st1.executeQuery(sql1);
+			    
+				String filetowrite = "C:/Users/praktikant/Desktop/test"+ formattedDate +".txt"; // Point to your location
+				FileWriter fw = new FileWriter(filetowrite);
+				
+			while(rs1.next()) {
+				fw.write(rs1.getString("id") + " ");
+				fw.write(rs1.getString("tonernname") + " ");
+				fw.write(rs1.getString("druckername") + " ");
+				fw.write(rs1.getString("druckmodell") + " ");
+				fw.write(rs1.getString("anzahl") + " ");
+				fw.write(rs1.getString("barcode") + " ");
+				fw.write("\n");
+			}
+			fw.close();
+			} catch (IOException | SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton_3.setBounds(216, 613, 85, 21);
+		frame.getContentPane().add(btnNewButton_3);
+		
+		JLabel lblNewLabel_6 = new JLabel("by Jonas H\u00E4ring");
+		lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblNewLabel_6.setForeground(Color.WHITE);
+		lblNewLabel_6.setBounds(791, 640, 85, 13);
+		frame.getContentPane().add(lblNewLabel_6);
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setEnabled(false);
+		progressBar.setFocusable(false);
+		progressBar.setStringPainted(true);
+		progressBar.setToolTipText("Loading");
+		progressBar.setForeground(Color.GREEN);
+		progressBar.setBounds(641, 516, 235, 13);
+		frame.getContentPane().add(progressBar);
+		
+		JButton btnNewButton_4 = new JButton("Increase");
+		btnNewButton_4.addActionListener(e -> {
+			update();
+			key = barcode.getText();
+			for(int i = 0; i < rowAmount; i++) {
+				if(table.getValueAt(i, 5).equals(key)) {
+					
+					String update = "UPDATE tonertabelle SET anzahl = anzahl + 1 WHERE barcode like '" + barcode.getText() + "'" ;
+					Statement stm = null;
+					try {
+						stm = conn.createStatement();
+						stm.execute(update);
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+					update();
+					break;
+				}
+//				5'; UPDATE tonertabelle set anzahl = 999 WHERE id = 1; UPDATE tonertabelle set anzahl = 0 WHERE barcode = '
+			}
+		});
+		btnNewButton_4.setBounds(312, 636, 85, 21);
+		frame.getContentPane().add(btnNewButton_4);
+		
+		JButton btnNewButton_5 = new JButton("Decrease");
+		btnNewButton_5.addActionListener(e -> {
+			update();
+			key = barcode.getText();
+			for(int i = 0; i < rowAmount; i++) {
+				if(table.getValueAt(i, 5).equals(key)) {
+				
+					String update = "UPDATE tonertabelle SET anzahl = anzahl - 1 WHERE barcode like '" + barcode.getText() + "'";
+					Statement stm = null;
+					try {
+						stm = conn.createStatement();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						stm.execute(update);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					update();
+					break;
+				}
+			}
+		});
+		btnNewButton_5.setBounds(401, 636, 85, 21);
+		frame.getContentPane().add(btnNewButton_5);
+		
+		JButton btnNewButton_6 = new JButton("Update");
+		btnNewButton_6.addActionListener(e -> {
+			update();
+		});
+		btnNewButton_6.setBounds(216, 567, 85, 21);
+		frame.getContentPane().add(btnNewButton_6);
+
+		int g = 20;
+		while(rs.next()) {
+			row[0] = rs.getString("id");
+			row[1] = rs.getString("tonernname");
+			row[2] = rs.getString("druckername");
+			row[3] = rs.getString("druckmodell");
+			row[4] = rs.getString("anzahl");
+			row[5] = rs.getString("barcode");
+			rowAmount++;
+			progressBar.setValue(100);
+			
+			model.addRow(row);
+		}
+	}
+	
+	public void update() {
+		while(rowAmount > 0) {
+			model.removeRow(rowAmount - 1);
+			rowAmount--;	
+		}
+		
+		try {
+		    conn1 = DriverManager.getConnection("jdbc:mysql://localhost/tonerverwaltung?" +"user=admin & password=1234");
+			Statement st1 = conn1.createStatement();
+			String sql1 = ("SELECT * FROM tonertabelle;");		
+			ResultSet rs1 = st1.executeQuery(sql1);
+			while(rs1.next()) {
+				row[0] = rs1.getString("id");
+				row[1] = rs1.getString("tonernname");
+				row[2] = rs1.getString("druckername");
+				row[3] = rs1.getString("druckmodell");
+				row[4] = rs1.getString("anzahl");
+				row[5] = rs1.getString("barcode");
+				rowAmount++;
+				model.addRow(row);
+			}
+			conn1.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+}
