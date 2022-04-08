@@ -1,0 +1,773 @@
+import java.awt.EventQueue;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JFrame;
+import javax.swing.SpringLayout;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import java.awt.Color;
+import java.awt.BorderLayout;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import java.awt.Choice;
+import javax.swing.*;
+import java.awt.Font;
+import javax.swing.border.LineBorder;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class Gui {
+
+	private JFrame frame;
+	private static Object[] row_lizenzen, row_seriennummern, row_Lieferungen, row_Lizenzverwendung;
+	private static DefaultTableModel model_Lizenzen, model_Seriennummern, model_Lieferungen, model_Lizenzverwendung;
+	private static Connection con_Lizenzen = null;
+	private static Connection con_Lieferungen = null;
+	private static Connection con_Lizenzverwendung = null;
+	private static Connection con_Seriennummern = null;
+	private static Connection con_update = null;
+	private static Connection conn = null;
+	private JTable table_Lizenzen;
+	private static int rowAmount_Lizenzen, rowAmount_Seriennummern, rowAmount_Lieferungen, rowAmount_Lizenzverwendung;
+	private JTable table_Seriennummern;
+	private JTable table_Lieferungen;
+	private JTable table_Lizenzverwendung;
+	private JComboBox comboBox;
+	private static Object[] column_Lizenzen, column_Seriennummern, column_Lieferungen, column_Lizenzverwendung;
+	private boolean lieferung, lizenzverwendung, seriennummer, defaultS;
+	private static JScrollPane scrollPane_Seriennummer;
+	private static JScrollPane scrollPane_Lieferung;
+	private static JScrollPane scrollPane_Lizenzverwendung;
+	private static int indicator;
+	private JTextField textBezeichnung;
+	private JTextField textLizenzart;
+	private JTextField textAnzahlGesamt;
+	private JTextField textLizID_SerNr;
+	private JTextField textSerNr_SerNr;
+	private JLabel lblNewLabel_3;
+	private JLabel lblNewLabel_4;
+	private JButton btnAddSerNr;
+	private JTextField textLieferant;
+	private JTextField textMenge;
+	private JTextField textPreis;
+	private JLabel lblNewLabel_5;
+	private JLabel lblNewLabel_6;
+	private JLabel lblNewLabel_7;
+	private JTextField textAblaufdatum_SerNr;
+	private JLabel lblNewLabel_8;
+	private JTextField textLieferung;
+	private JLabel lblNewLabel_9;
+	private JTextField textAblauf;
+	private JLabel lblNewLabel_10;
+	private JButton btnAddLiz;
+	private JTextField textLizID_Lieferung;
+	private JLabel lblNeueVerwendung;
+	private JTextField textLizID_Nutzen;
+	private JTextField textSerNrID_Nutzen;
+	private JTextField textVerwendung_Nutzen;
+	private JTextField textAnzahl_Nutzen;
+	private JLabel lblNewLabel_3_2;
+	private JLabel lblNewLabel_3_3;
+	private JLabel lblNewLabel_3_4;
+	private JLabel lblNewLabel_3_5;
+	private JButton btnAddNutzen;
+	private JButton btnNewButton;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Gui window = new Gui();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Gui() {
+		try {
+			con_Lizenzen = DriverManager
+					.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+			con_Lieferungen = DriverManager
+					.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+			con_Lizenzverwendung = DriverManager
+					.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+			con_Seriennummern = DriverManager
+					.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+
+		} catch (SQLException ex) {
+			System.out.println("SQLException: " + ex.getMessage());
+			System.out.println("SQLState: " + ex.getSQLState());
+			System.out.println("VendorError: " + ex.getErrorCode());
+		}
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		row_lizenzen = new Object[5];
+		row_seriennummern = new Object[4];
+		row_Lieferungen = new Object[7];
+		row_Lizenzverwendung = new Object[5];
+		column_Lizenzen = new Object[] { "ID_Liz", "Bezeichnung", "Lizenzart", "Anzahl Gesamt", "Anzahl benutzt" };
+		column_Seriennummern = new Object[] { "ID_SerNr", "ID_Liz", "SerNr", "Ablaufdatum" };
+		column_Lieferungen = new Object[] { "ID_Lieferung", "Lieferant", "Ablaufdatum", "Lieferdatum", "Preis",
+				"Menge" };
+		column_Lizenzverwendung = new Object[] { "ID_Verwendung", "ID_Liz", "ID_SerNr", "Verwendung", "Anzahl" };
+
+		defaultS = true;
+		lieferung = false;
+		lizenzverwendung = false;
+		seriennummer = false;
+
+		JScrollPane scrollPane_Seriennummer = new JScrollPane();
+		JScrollPane scrollPane_Lieferung = new JScrollPane();
+		JScrollPane scrollPane_Lizenzverwendung = new JScrollPane();
+
+		frame = new JFrame();
+		frame.getContentPane().setBackground(Color.DARK_GRAY);
+		frame.getContentPane().setLayout(null);
+
+		JScrollPane scrollPane_Lizenzen = new JScrollPane();
+		scrollPane_Lizenzen.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane_Lizenzen.setBounds(10, 10, 557, 200);
+		frame.getContentPane().add(scrollPane_Lizenzen);
+
+		// LizenzTabelle
+		table_Lizenzen = new JTable();
+
+		scrollPane_Lizenzen.setViewportView(table_Lizenzen);
+		model_Lizenzen = new DefaultTableModel();
+		model_Lizenzen.setColumnIdentifiers(column_Lizenzen);
+		table_Lizenzen.setModel(model_Lizenzen);
+
+		// ComboBox
+		String[] tables = { "Default", "Seriennummern", "Lieferungen", "Lizenzverwendung" };
+		comboBox = new JComboBox(tables);
+		comboBox.addActionListener(e -> {
+			indicator = comboBox.getSelectedIndex();
+
+			if (indicator == 1 && !seriennummer) {
+				scrollPane_Seriennummer.setBounds(577, 11, 679, 199);
+				frame.getContentPane().add(scrollPane_Seriennummer);
+
+				table_Seriennummern = new JTable();
+
+				model_Seriennummern = new DefaultTableModel();
+				model_Seriennummern.setColumnIdentifiers(column_Seriennummern);
+				table_Seriennummern.setModel(model_Seriennummern);
+				scrollPane_Seriennummer.setViewportView(table_Seriennummern);
+
+				if (lieferung)
+					frame.remove(scrollPane_Lieferung);
+				else if (lizenzverwendung)
+					frame.remove(scrollPane_Lizenzverwendung);
+				else if (seriennummer)
+					frame.remove(scrollPane_Seriennummer);
+
+				lieferung = false;
+				lizenzverwendung = false;
+				seriennummer = true;
+
+			} else if (indicator == 2 && !lieferung) {
+				scrollPane_Lieferung.setBounds(577, 11, 679, 199);
+				frame.getContentPane().add(scrollPane_Lieferung);
+
+				table_Lieferungen = new JTable();
+
+				model_Lieferungen = new DefaultTableModel();
+				model_Lieferungen.setColumnIdentifiers(column_Lieferungen);
+				table_Lieferungen.setModel(model_Lieferungen);
+				scrollPane_Lieferung.setViewportView(table_Lieferungen);
+
+				if (lieferung)
+					frame.remove(scrollPane_Lieferung);
+				else if (lizenzverwendung)
+					frame.remove(scrollPane_Lizenzverwendung);
+				else if (seriennummer)
+					frame.remove(scrollPane_Seriennummer);
+
+				lieferung = true;
+				lizenzverwendung = false;
+				seriennummer = false;
+
+			} else if (indicator == 3 && !lizenzverwendung) {
+				scrollPane_Lizenzverwendung.setBounds(577, 11, 679, 199);
+				frame.getContentPane().add(scrollPane_Lizenzverwendung);
+
+				table_Lizenzverwendung = new JTable();
+
+				model_Lizenzverwendung = new DefaultTableModel();
+				model_Lizenzverwendung.setColumnIdentifiers(column_Lizenzverwendung);
+				table_Lizenzverwendung.setModel(model_Lizenzverwendung);
+				scrollPane_Lizenzverwendung.setViewportView(table_Lizenzverwendung);
+
+				if (lieferung)
+					frame.remove(scrollPane_Lieferung);
+				else if (lizenzverwendung)
+					frame.remove(scrollPane_Lizenzverwendung);
+				else if (seriennummer)
+					frame.remove(scrollPane_Seriennummer);
+
+				lieferung = false;
+				lizenzverwendung = true;
+				seriennummer = false;
+
+			}
+		});
+		comboBox.setBounds(10, 220, 175, 21);
+		frame.getContentPane().add(comboBox);
+
+		JLabel lblNewLabel = new JLabel("Neue Lizenz");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNewLabel.setForeground(Color.WHITE);
+		lblNewLabel.setBounds(10, 300, 76, 13);
+		frame.getContentPane().add(lblNewLabel);
+
+		textBezeichnung = new JTextField();
+		textBezeichnung.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textBezeichnung.setBounds(96, 298, 96, 19);
+		frame.getContentPane().add(textBezeichnung);
+		textBezeichnung.setColumns(10);
+
+		textLizenzart = new JTextField();
+		textLizenzart.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textLizenzart.setBounds(202, 298, 96, 19);
+		frame.getContentPane().add(textLizenzart);
+		textLizenzart.setColumns(10);
+
+		textAnzahlGesamt = new JTextField();
+		textAnzahlGesamt.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textAnzahlGesamt.setBounds(308, 298, 96, 19);
+		frame.getContentPane().add(textAnzahlGesamt);
+		textAnzahlGesamt.setColumns(10);
+
+		JLabel lblNewLabel_1 = new JLabel("Bezeichnung");
+		lblNewLabel_1.setForeground(Color.WHITE);
+		lblNewLabel_1.setBounds(96, 285, 89, 13);
+		frame.getContentPane().add(lblNewLabel_1);
+
+		JLabel lblNewLabel_1_1 = new JLabel("Lizenzart");
+		lblNewLabel_1_1.setForeground(Color.WHITE);
+		lblNewLabel_1_1.setBounds(202, 285, 89, 13);
+		frame.getContentPane().add(lblNewLabel_1_1);
+
+		JLabel lblNewLabel_1_2 = new JLabel("Gesamzanzahl");
+		lblNewLabel_1_2.setForeground(Color.WHITE);
+		lblNewLabel_1_2.setBounds(308, 285, 89, 13);
+		frame.getContentPane().add(lblNewLabel_1_2);
+
+		textLizID_SerNr = new JTextField();
+		textLizID_SerNr.setEditable(false);
+		textLizID_SerNr.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textLizID_SerNr.setColumns(10);
+		textLizID_SerNr.setBounds(96, 337, 96, 19);
+		frame.getContentPane().add(textLizID_SerNr);
+
+		textSerNr_SerNr = new JTextField();
+		textSerNr_SerNr.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textSerNr_SerNr.setColumns(10);
+		textSerNr_SerNr.setBounds(202, 337, 96, 19);
+		frame.getContentPane().add(textSerNr_SerNr);
+
+		JLabel lblNeueSeriennummer = new JLabel("Neue SerienNr");
+		lblNeueSeriennummer.setForeground(Color.WHITE);
+		lblNeueSeriennummer.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNeueSeriennummer.setBounds(10, 338, 89, 13);
+		frame.getContentPane().add(lblNeueSeriennummer);
+
+		lblNewLabel_3 = new JLabel("Lizenz ID");
+		lblNewLabel_3.setForeground(Color.WHITE);
+		lblNewLabel_3.setBounds(96, 325, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3);
+
+		lblNewLabel_4 = new JLabel("Seriennummer");
+		lblNewLabel_4.setForeground(Color.WHITE);
+		lblNewLabel_4.setBounds(202, 325, 89, 13);
+		frame.getContentPane().add(lblNewLabel_4);
+
+		btnAddSerNr = new JButton("Hinzuf\u00FCgen");
+		btnAddSerNr.addActionListener(e -> {
+			try {
+				if (!textSerNr_SerNr.getText().equals("") && !textLizID_SerNr.getText().equals("")
+						&& !textAblaufdatum_SerNr.getText().equals("")) {
+
+					Statement st_Seriennummern = con_Lizenzen.createStatement();
+					String sql_Seriennummern = ("INSERT INTO seriennummern (ID_Liz, SerNr, Ablaufdatum)\r\n"
+							+ "VALUES ('" + textLizID_SerNr.getText() + "', '" + textSerNr_SerNr.getText() + "', '"
+							+ textAblaufdatum_SerNr.getText() + "')");
+
+					Statement stm = null;
+					stm = con_Seriennummern.createStatement();
+					stm.execute(sql_Seriennummern);
+
+					JOptionPane.showMessageDialog(null, "Erfolgreich hinzugefügt!");
+
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Bitte jedes Feld ausfüllen! \nSonst bitte an einen Adminestrator wenden");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnAddSerNr.setBounds(414, 336, 102, 21);
+		frame.getContentPane().add(btnAddSerNr);
+
+		textLieferant = new JTextField();
+		textLieferant.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textLieferant.setColumns(10);
+		textLieferant.setBounds(202, 381, 96, 19);
+		frame.getContentPane().add(textLieferant);
+
+		textMenge = new JTextField();
+		textMenge.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textMenge.setColumns(10);
+		textMenge.setBounds(626, 381, 96, 19);
+		frame.getContentPane().add(textMenge);
+
+		textPreis = new JTextField();
+		textPreis.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textPreis.setColumns(10);
+		textPreis.setBounds(520, 381, 96, 19);
+		frame.getContentPane().add(textPreis);
+
+		lblNewLabel_5 = new JLabel("Lieferant");
+		lblNewLabel_5.setForeground(Color.WHITE);
+		lblNewLabel_5.setBounds(202, 366, 89, 13);
+		frame.getContentPane().add(lblNewLabel_5);
+
+		lblNewLabel_6 = new JLabel("Menge");
+		lblNewLabel_6.setForeground(Color.WHITE);
+		lblNewLabel_6.setBounds(626, 366, 89, 13);
+		frame.getContentPane().add(lblNewLabel_6);
+
+		lblNewLabel_7 = new JLabel("Preis");
+		lblNewLabel_7.setForeground(Color.WHITE);
+		lblNewLabel_7.setBounds(520, 366, 89, 13);
+		frame.getContentPane().add(lblNewLabel_7);
+
+		textAblaufdatum_SerNr = new JTextField();
+		textAblaufdatum_SerNr.setColumns(10);
+		textAblaufdatum_SerNr.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textAblaufdatum_SerNr.setBounds(308, 337, 96, 19);
+		frame.getContentPane().add(textAblaufdatum_SerNr);
+
+		lblNewLabel_8 = new JLabel("Ablaufdatum");
+		lblNewLabel_8.setForeground(Color.WHITE);
+		lblNewLabel_8.setBounds(308, 325, 89, 13);
+		frame.getContentPane().add(lblNewLabel_8);
+
+		textLieferung = new JTextField();
+		textLieferung.setColumns(10);
+		textLieferung.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textLieferung.setBounds(414, 381, 96, 19);
+		frame.getContentPane().add(textLieferung);
+
+		lblNewLabel_9 = new JLabel("Lieferdatum");
+		lblNewLabel_9.setForeground(Color.WHITE);
+		lblNewLabel_9.setBounds(414, 366, 89, 13);
+		frame.getContentPane().add(lblNewLabel_9);
+
+		textAblauf = new JTextField();
+		textAblauf.setColumns(10);
+		textAblauf.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textAblauf.setBounds(308, 381, 96, 19);
+		frame.getContentPane().add(textAblauf);
+
+		lblNewLabel_10 = new JLabel("Ablaufdatum");
+		lblNewLabel_10.setForeground(Color.WHITE);
+		lblNewLabel_10.setBounds(308, 366, 89, 13);
+		frame.getContentPane().add(lblNewLabel_10);
+
+		btnAddLiz = new JButton("Hinzuf\u00FCgen");
+		btnAddLiz.addActionListener(e -> {
+			try {
+				if (!textBezeichnung.getText().equals("") && !textLizenzart.getText().equals("")
+						&& !textAnzahlGesamt.getText().equals("")) {
+
+					System.out.println("INSERT INTO lizenzen (Bezeichnung, Lizenzart, Owned, Used)\r\n" + "VALUES ('"
+							+ textBezeichnung.getText() + "', '" + textLizenzart.getText() + "', '"
+							+ textAnzahlGesamt.getText() + "')");
+
+					Statement st_Lieferung = con_Lizenzen.createStatement();
+					String sql_Lieferung = ("INSERT INTO lizenzen (Bezeichnung, Lizenzart, Owned, Used)\r\n"
+							+ "VALUES ('" + textBezeichnung.getText() + "', '" + textLizenzart.getText() + "', '"
+							+ textAnzahlGesamt.getText() + "')");
+
+					Statement stm = null;
+					stm = con_Lieferungen.createStatement();
+					stm.execute(sql_Lieferung);
+
+					JOptionPane.showMessageDialog(null, "Erfolgreich hinzugefügt!");
+
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Bitte jedes Feld ausfüllen! \nSonst bitte an einen Adminestrator wenden");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			update();
+		});
+		btnAddLiz.setBounds(414, 297, 102, 21);
+		frame.getContentPane().add(btnAddLiz);
+
+		JButton btnAddLieferung = new JButton("Hinzuf\u00FCgen");
+		btnAddLieferung.addActionListener(e -> {
+			try {
+				if (!textLizID_Lieferung.getText().equals("") && !textLieferant.getText().equals("")
+						&& !textAblauf.getText().equals("") && !textLieferung.getText().equals("")
+						&& !textPreis.getText().equals("") && !textMenge.getText().equals("")) {
+					Statement st_Lieferung = con_Lieferungen.createStatement();
+					String sql_Lieferung = ("INSERT INTO lieferungen (ID_Liz, Lieferant, Ablaufdatum, Lieferdatum, Preis, Menge)\r\n"
+							+ "VALUES ('" + textLizID_Lieferung.getText() + "', '" + textLieferant.getText() + "', '"
+							+ textAblauf.getText() + "', '" + textLieferung.getText() + "', '" + textPreis.getText()
+							+ "', '" + textMenge.getText() + "')");
+
+					Statement stm = null;
+					stm = con_Lieferungen.createStatement();
+					stm.execute(sql_Lieferung);
+
+					JOptionPane.showMessageDialog(null, "Erfolgreich hinzugefügt!");
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Bitte jedes Feld ausfüllen! \nSonst bitte an einen Adminestrator wenden");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnAddLieferung.setBounds(732, 380, 102, 21);
+		frame.getContentPane().add(btnAddLieferung);
+
+		textLizID_Lieferung = new JTextField();
+		textLizID_Lieferung.setEditable(false);
+		textLizID_Lieferung.setColumns(10);
+		textLizID_Lieferung.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textLizID_Lieferung.setBounds(96, 381, 96, 19);
+		frame.getContentPane().add(textLizID_Lieferung);
+
+		JLabel lblNewLabel_3_1 = new JLabel("Lizenz ID");
+		lblNewLabel_3_1.setForeground(Color.WHITE);
+		lblNewLabel_3_1.setBounds(96, 366, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3_1);
+
+		JLabel lblNeueLieferung = new JLabel("Neue Lieferung");
+		lblNeueLieferung.setForeground(Color.WHITE);
+		lblNeueLieferung.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNeueLieferung.setBounds(10, 383, 89, 13);
+		frame.getContentPane().add(lblNeueLieferung);
+
+		lblNeueVerwendung = new JLabel("Neuer Nutzen");
+		lblNeueVerwendung.setForeground(Color.WHITE);
+		lblNeueVerwendung.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblNeueVerwendung.setBounds(10, 427, 89, 13);
+		frame.getContentPane().add(lblNeueVerwendung);
+
+		textLizID_Nutzen = new JTextField();
+		textLizID_Nutzen.setEditable(false);
+		textLizID_Nutzen.setColumns(10);
+		textLizID_Nutzen.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textLizID_Nutzen.setBounds(96, 425, 96, 19);
+		frame.getContentPane().add(textLizID_Nutzen);
+
+		textSerNrID_Nutzen = new JTextField();
+		textSerNrID_Nutzen.setColumns(10);
+		textSerNrID_Nutzen.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textSerNrID_Nutzen.setBounds(202, 425, 96, 19);
+		frame.getContentPane().add(textSerNrID_Nutzen);
+
+		textVerwendung_Nutzen = new JTextField();
+		textVerwendung_Nutzen.setColumns(10);
+		textVerwendung_Nutzen.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textVerwendung_Nutzen.setBounds(308, 425, 96, 19);
+		frame.getContentPane().add(textVerwendung_Nutzen);
+
+		textAnzahl_Nutzen = new JTextField();
+		textAnzahl_Nutzen.setColumns(10);
+		textAnzahl_Nutzen.setBorder(new LineBorder(new Color(0, 0, 0)));
+		textAnzahl_Nutzen.setBounds(414, 425, 96, 19);
+		frame.getContentPane().add(textAnzahl_Nutzen);
+
+		lblNewLabel_3_2 = new JLabel("Lizenz ID");
+		lblNewLabel_3_2.setForeground(Color.WHITE);
+		lblNewLabel_3_2.setBounds(96, 410, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3_2);
+
+		lblNewLabel_3_3 = new JLabel("Seriennummer ID");
+		lblNewLabel_3_3.setForeground(Color.WHITE);
+		lblNewLabel_3_3.setBounds(202, 410, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3_3);
+
+		lblNewLabel_3_4 = new JLabel("Verwendung");
+		lblNewLabel_3_4.setForeground(Color.WHITE);
+		lblNewLabel_3_4.setBounds(308, 410, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3_4);
+
+		lblNewLabel_3_5 = new JLabel("Anzahl");
+		lblNewLabel_3_5.setForeground(Color.WHITE);
+		lblNewLabel_3_5.setBounds(414, 410, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3_5);
+
+		btnAddNutzen = new JButton("Hinzuf\u00FCgen");
+		btnAddNutzen.addActionListener(e -> {
+			try {
+				if (!textLizID_Nutzen.getText().equals("") && !textSerNrID_Nutzen.getText().equals("")
+						&& !textVerwendung_Nutzen.getText().equals("") && !textAnzahl_Nutzen.getText().equals("")) {
+
+					Statement st_Lizenzverwendung = con_Lizenzverwendung.createStatement();
+					String sql_Lizenzverwendung = ("INSERT INTO Lizenzverwendung (ID_Liz, ID_SerNr, Verwendung, Anzahl)\r\n"
+							+ "VALUES ('" + textLizID_Nutzen.getText() + "', '" + textSerNrID_Nutzen.getText() + "', '"
+							+ textVerwendung_Nutzen.getText() + "', '" + textAnzahl_Nutzen.getText() + "')");
+
+					Statement stm = null;
+					stm = con_Lizenzverwendung.createStatement();
+					stm.execute(sql_Lizenzverwendung);
+
+					JOptionPane.showMessageDialog(null, "Erfolgreich hinzugefügt!");
+
+				} else {
+					JOptionPane.showMessageDialog(null,
+							"Bitte jedes Feld ausfüllen! \nSonst bitte an einen Adminestrator wenden");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnAddNutzen.setBounds(520, 424, 102, 21);
+		frame.getContentPane().add(btnAddNutzen);
+
+		// JTable Commands
+		table_Lizenzen.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent a) {
+				try {
+
+					int i = table_Lizenzen.getSelectedRow();
+					Object temp_id_Liz = table_Lizenzen.getValueAt(i, 0);
+
+					textLizID_SerNr.setText((String) temp_id_Liz);
+					textLizID_Lieferung.setText((String) temp_id_Liz);
+					textLizID_Nutzen.setText((String) temp_id_Liz);
+
+					if (indicator == 1) {
+
+						Statement st_SerNr = con_Seriennummern.createStatement();
+						String sql_SerNr = ("SELECT * FROM Seriennummern WHERE ID_Liz = " + temp_id_Liz + "");
+						ResultSet rs_SerNr = st_SerNr.executeQuery(sql_SerNr);
+
+						while (rowAmount_Lizenzverwendung > 0)
+							rowAmount_Lizenzverwendung--;
+						while (rowAmount_Lieferungen > 0)
+							rowAmount_Lieferungen--;
+
+						while (rowAmount_Seriennummern > 0) {
+							model_Seriennummern.removeRow(rowAmount_Seriennummern - 1);
+							rowAmount_Seriennummern--;
+						}
+
+						while (rs_SerNr.next()) {
+							row_seriennummern[0] = rs_SerNr.getString("ID_SerNr");
+							row_seriennummern[1] = rs_SerNr.getString("ID_Liz");
+							row_seriennummern[2] = rs_SerNr.getString("SerNr");
+							row_seriennummern[3] = rs_SerNr.getString("Ablaufdatum");
+							rowAmount_Seriennummern++;
+							model_Seriennummern.addRow(row_seriennummern);
+						}
+
+					} else if (indicator == 2) {
+
+						Statement st_Lieferungen = con_Seriennummern.createStatement();
+						String sql_Lieferungen = ("SELECT * FROM Lieferungen WHERE ID_Liz = " + temp_id_Liz + "");
+						ResultSet rs_Lieferungen = st_Lieferungen.executeQuery(sql_Lieferungen);
+
+						while (rowAmount_Lizenzverwendung > 0)
+							rowAmount_Lizenzverwendung--;
+						while (rowAmount_Seriennummern > 0)
+							rowAmount_Seriennummern--;
+
+						while (rowAmount_Lieferungen > 0) {
+							model_Lieferungen.removeRow(rowAmount_Lieferungen - 1);
+							rowAmount_Lieferungen--;
+						}
+
+						while (rs_Lieferungen.next()) {
+							row_Lieferungen[0] = rs_Lieferungen.getString("ID_Lieferung");
+							row_Lieferungen[1] = rs_Lieferungen.getString("ID_Liz");
+							row_Lieferungen[2] = rs_Lieferungen.getString("Lieferant");
+							row_Lieferungen[3] = rs_Lieferungen.getString("Ablaufdatum");
+							row_Lieferungen[4] = rs_Lieferungen.getString("Lieferdatum");
+							row_Lieferungen[5] = rs_Lieferungen.getString("Preis");
+							row_Lieferungen[6] = rs_Lieferungen.getString("Menge");
+
+							rowAmount_Lieferungen++;
+							model_Lieferungen.addRow(row_Lieferungen);
+						}
+
+					} else if (indicator == 3) {
+						Statement st_Lizenzverwendung = con_Seriennummern.createStatement();
+						String sql_Lizenzverwendung = ("SELECT * FROM Lizenzverwendung WHERE ID_Liz = " + temp_id_Liz
+								+ "");
+						ResultSet rs_Lizenzverwendung = st_Lizenzverwendung.executeQuery(sql_Lizenzverwendung);
+
+						while (rowAmount_Seriennummern > 0)
+							rowAmount_Seriennummern--;
+						while (rowAmount_Lieferungen > 0)
+							rowAmount_Lieferungen--;
+
+						while (rowAmount_Lizenzverwendung > 0) {
+							model_Lizenzverwendung.removeRow(rowAmount_Lizenzverwendung - 1);
+							rowAmount_Lizenzverwendung--;
+						}
+
+						while (rs_Lizenzverwendung.next()) {
+							row_Lizenzverwendung[0] = rs_Lizenzverwendung.getString("ID_Verwendung");
+							row_Lizenzverwendung[1] = rs_Lizenzverwendung.getString("ID_Liz");
+							row_Lizenzverwendung[2] = rs_Lizenzverwendung.getString("ID_SerNr");
+							row_Lizenzverwendung[3] = rs_Lizenzverwendung.getString("Verwendung");
+							row_Lizenzverwendung[4] = rs_Lizenzverwendung.getString("Anzahl");
+
+							rowAmount_Lizenzverwendung++;
+							model_Lizenzverwendung.addRow(row_Lizenzverwendung);
+						}
+					}
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+
+		// Set Frame
+		frame.setBounds(100, 100, 1280, 720);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		try {
+			try {
+				con_Lizenzverwendung = DriverManager
+						.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+				Statement st_Lizenzverwendung = con_Lizenzverwendung.createStatement();
+				String sql_Lizenzverwendung = ("SELECT ID_Liz FROM Lizenzen");
+				ResultSet rs_Lizenzverwendung = st_Lizenzverwendung.executeQuery(sql_Lizenzverwendung);
+				int i1;
+				int count;
+
+				while (rs_Lizenzverwendung.next()) {
+					i1 = rs_Lizenzverwendung.getInt("ID_Liz");
+
+					conn = DriverManager
+							.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+					Statement st1 = conn.createStatement();
+					String sql1 = ("SELECT SUM(anzahl) as anzahl_ FROM Lizenzverwendung WHERE ID_Liz = " + i1 + "");
+					ResultSet rs1 = st1.executeQuery(sql1);
+
+					if (rs1.next()) {
+						String update = "UPDATE Lizenzen SET used = " + rs1.getInt("anzahl_") + " WHERE ID_Liz like '"
+								+ i1 + "'";
+						Statement stm = null;
+						stm = conn.createStatement();
+						stm.execute(update);
+					}
+				}
+				conn.close();
+				con_Lizenzverwendung.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			update();
+			Statement st = con_Lizenzen.createStatement();
+			String sql = ("SELECT * FROM lizenzen;");
+			ResultSet rs = st.executeQuery(sql);
+
+			while (rs.next()) {
+				row_lizenzen[0] = rs.getString("id_liz");
+				row_lizenzen[1] = rs.getString("bezeichnung");
+				row_lizenzen[2] = rs.getString("lizenzart");
+				row_lizenzen[3] = rs.getString("owned");
+				row_lizenzen[4] = rs.getString("used");
+
+				rowAmount_Lizenzen++;
+
+				model_Lizenzen.addRow(row_lizenzen);
+			}
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		try {
+			con_Lizenzverwendung = DriverManager
+					.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+			Statement st_Lizenzverwendung = con_Lizenzverwendung.createStatement();
+			String sql_Lizenzverwendung = ("SELECT ID_Liz FROM Lizenzen");
+			ResultSet rs_Lizenzverwendung = st_Lizenzverwendung.executeQuery(sql_Lizenzverwendung);
+			int i1;
+			int count;
+
+			while (rs_Lizenzverwendung.next()) {
+				i1 = rs_Lizenzverwendung.getInt("ID_Liz");
+
+				conn = DriverManager
+						.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+				Statement st1 = conn.createStatement();
+				String sql1 = ("SELECT SUM(anzahl) as anzahl_ FROM Lizenzverwendung WHERE ID_Liz = " + i1 + "");
+				ResultSet rs1 = st1.executeQuery(sql1);
+
+				if (rs1.next()) {
+					String update = "UPDATE Lizenzen SET used = " + rs1.getInt("anzahl_") + " WHERE ID_Liz like '" + i1
+							+ "'";
+					Statement stm = null;
+					stm = conn.createStatement();
+					stm.execute(update);
+				}
+			}
+			conn.close();
+			con_Lizenzverwendung.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+		update();
+	}
+
+	public void update() {
+		while (rowAmount_Lizenzen > 0) {
+			model_Lizenzen.removeRow(rowAmount_Lizenzen - 1);
+			rowAmount_Lizenzen--;
+		}
+
+		try {
+
+			con_update = DriverManager
+					.getConnection("jdbc:mysql://localhost/lizenzverwaltung?" + "user=admin & password=1234");
+			Statement st2 = con_update.createStatement();
+			String sql2 = ("SELECT * FROM lizenzen;");
+			ResultSet rs2 = st2.executeQuery(sql2);
+			while (rs2.next()) {
+				row_lizenzen[0] = rs2.getString("id_liz");
+				row_lizenzen[1] = rs2.getString("bezeichnung");
+				row_lizenzen[2] = rs2.getString("lizenzart");
+				row_lizenzen[3] = rs2.getString("owned");
+				row_lizenzen[4] = rs2.getString("used");
+				rowAmount_Lizenzen++;
+				model_Lizenzen.addRow(row_lizenzen);
+			}
+			con_update.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+
+	}
+}
