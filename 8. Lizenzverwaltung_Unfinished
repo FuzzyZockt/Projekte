@@ -78,6 +78,7 @@ public class Gui {
 	private JLabel lblNewLabel_3_4;
 	private JButton btnAddNutzen;
 	private JButton btnNewButton;
+	private JTextField textLizID;
 
 	/**
 	 * Launch the application.
@@ -600,6 +601,129 @@ public class Gui {
 		btnAddNutzen.setBounds(414, 424, 102, 21);
 		frame.getContentPane().add(btnAddNutzen);
 
+		JButton btnNewButton_1 = new JButton("Update");
+		btnNewButton_1.addActionListener(e -> {
+			try {
+				if (!textBezeichnung.getText().equals("") && !textLizenzart.getText().equals("")) {
+					String update = "UPDATE Lizenzen SET bezeichnung = '" + textBezeichnung.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+
+					String update1 = "UPDATE Lizenzen SET lizenzart = '" + textLizenzart.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+					Statement stm = null;
+					stm = conn.createStatement();
+					stm.execute(update);
+					stm.execute(update1);
+				}
+				JOptionPane.showMessageDialog(null, "Updated!");
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			update();
+		});
+		btnNewButton_1.setBounds(420, 297, 85, 21);
+		frame.getContentPane().add(btnNewButton_1);
+
+		JButton btnNewButton_1_1 = new JButton("Update");
+		btnNewButton_1_1.addActionListener(e -> {
+			try {
+				if (!textAblaufdatum_SerNr.getText().equals("DD/MM/YYYY") && !textSerNr_SerNr.getText().equals("")) {
+					String update = "UPDATE Seriennummern SET SerNr = '" + textSerNr_SerNr.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+
+					String update1 = "UPDATE Seriennummern SET ablaufdatum = '" + textAblaufdatum_SerNr.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+					Statement stm = null;
+					stm = conn.createStatement();
+					stm.execute(update);
+					stm.execute(update1);
+
+					JOptionPane.showMessageDialog(null, "Updated!");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			update();
+		});
+		btnNewButton_1_1.setBounds(526, 336, 85, 21);
+		frame.getContentPane().add(btnNewButton_1_1);
+
+		JButton btnNewButton_1_2 = new JButton("Update");
+		btnNewButton_1_2.addActionListener(e -> {
+			try {
+				if (!textLizID_Lieferung.getText().equals("") && !textLieferant.getText().equals("")
+						&& !textAblauf.getText().equals("") && !textLieferung.getText().equals("")
+						&& !textPreis.getText().equals("") && !textMenge.getText().equals("")) {
+
+					String update = "UPDATE Lieferungen SET Lieferant = '" + textLieferant.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+
+					String update1 = "UPDATE Lieferungen SET Ablaufdatum = '" + textAblauf.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+
+					String update2 = "UPDATE Lieferungen SET Lieferdatum = '" + textLieferung.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+
+					String update3 = "UPDATE Lieferungen SET Preis = '" + textPreis.getText() + "' WHERE ID_Liz LIKE "
+							+ Integer.valueOf(textLizID.getText());
+
+					String update4 = "UPDATE Lieferungen SET Menge = '" + textMenge.getText() + "' WHERE ID_Liz LIKE "
+							+ Integer.valueOf(textLizID.getText());
+
+					Statement stm = null;
+					stm = conn.createStatement();
+					stm.execute(update);
+					stm.execute(update1);
+					stm.execute(update2);
+					stm.execute(update3);
+					stm.execute(update4);
+
+					JOptionPane.showMessageDialog(null, "Updated!");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			update();
+		});
+		btnNewButton_1_2.setBounds(844, 380, 85, 21);
+		frame.getContentPane().add(btnNewButton_1_2);
+
+		JButton btnNewButton_1_3 = new JButton("Update");
+		btnNewButton_1_3.addActionListener(e -> {
+			try {
+				if (!textSerNrID_Nutzen.getText().equals("") && !textVerwendung_Nutzen.getText().equals("")
+						&& !textLizID_Nutzen.getText().equals("")) {
+					String update = "UPDATE Lizenzverwendung SET ID_SerNr = '" + textSerNrID_Nutzen.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+
+					String update1 = "UPDATE Lizenzverwendung SET Verwendung = '" + textVerwendung_Nutzen.getText()
+							+ "' WHERE ID_Liz LIKE " + Integer.valueOf(textLizID.getText());
+					Statement stm = null;
+					stm = conn.createStatement();
+					stm.execute(update);
+					stm.execute(update1);
+
+					JOptionPane.showMessageDialog(null, "Updated!");
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			update();
+		});
+		btnNewButton_1_3.setBounds(526, 424, 85, 21);
+		frame.getContentPane().add(btnNewButton_1_3);
+
+		textLizID = new JTextField();
+		textLizID.setEditable(false);
+		textLizID.setBounds(515, 298, 96, 19);
+		frame.getContentPane().add(textLizID);
+		textLizID.setColumns(10);
+
+		JLabel lblNewLabel_3_5 = new JLabel("Lizenz ID");
+		lblNewLabel_3_5.setForeground(Color.WHITE);
+		lblNewLabel_3_5.setBounds(515, 285, 89, 13);
+		frame.getContentPane().add(lblNewLabel_3_5);
+
 		// JTable Commands
 		table_Lizenzen.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent a) {
@@ -611,6 +735,7 @@ public class Gui {
 					textLizID_SerNr.setText((String) temp_id_Liz);
 					textLizID_Lieferung.setText((String) temp_id_Liz);
 					textLizID_Nutzen.setText((String) temp_id_Liz);
+					textLizID.setText((String) temp_id_Liz);
 
 					if (indicator == 1) {
 
@@ -751,6 +876,7 @@ public class Gui {
 		}
 
 		update();
+		JOptionPane.showMessageDialog(null, "Update braucht noch die jeweilige ID als übergabe!");
 	}
 
 	public void update() {
