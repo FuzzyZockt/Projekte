@@ -1,0 +1,545 @@
+ import java.awt.EventQueue;
+import javax.swing.JFrame;
+import java.awt.Color;
+import javax.swing.JComboBox;
+import java.awt.BorderLayout;
+import javax.swing.JToggleButton;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JLabel;
+import javax.swing.JRadioButton;
+import javax.swing.DropMode;
+import javax.swing.JButton;
+import javax.swing.JTree;
+import java.awt.event.ActionListener;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import javax.swing.JSpinner;
+import javax.swing.JSlider;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JMenu;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.JProgressBar;
+import java.awt.Font;
+
+public class Todo {
+
+	private JFrame frame;
+	private JTable table;
+	private JTable table_1;
+	private JTable table_2;
+	private JTable table_3;
+	private JTable table_4;
+	private JTable table_5;
+	private JTextField task;
+	private static DefaultTableModel model, model1, model2, model3, model4, model5;
+	private static Object[] row;
+	private ArrayList mondayList, tuesdayList, wednesdayList, thursdayList, fridayList, doneList;
+	
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Todo window = new Todo();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Todo() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		row = new Object[1];
+		
+		mondayList = new ArrayList();
+		tuesdayList = new ArrayList();
+		wednesdayList = new ArrayList();
+		thursdayList = new ArrayList();
+		fridayList = new ArrayList();
+		doneList = new ArrayList();
+		
+		frame = new JFrame();
+		frame.setResizable(false);
+		frame.getContentPane().setForeground(Color.WHITE);
+		frame.getContentPane().setBackground(Color.DARK_GRAY);
+		frame.getContentPane().setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane.setBounds(10, 10, 132, 400);
+		frame.getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		model = new DefaultTableModel();
+
+		scrollPane.setViewportView(table);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane_1.setBounds(152, 10, 132, 400);
+		frame.getContentPane().add(scrollPane_1);
+		
+		table_1 = new JTable();
+		model1 = new DefaultTableModel();
+		Object[] column1 = {"Tuesday"};
+		model1.setColumnIdentifiers(column1);
+		table_1.setModel(model1);
+		scrollPane_1.setViewportView(table_1);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane_2.setBounds(294, 10, 132, 400);
+		frame.getContentPane().add(scrollPane_2);
+		
+		table_2 = new JTable();
+		model2 = new DefaultTableModel();
+		Object[] column2 = {"Wednesday"};
+		model2.setColumnIdentifiers(column2);
+		table_2.setModel(model2);
+		scrollPane_2.setViewportView(table_2);
+		
+		JScrollPane scrollPane_3 = new JScrollPane();
+		scrollPane_3.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane_3.setBounds(436, 10, 132, 400);
+		frame.getContentPane().add(scrollPane_3);
+		
+		table_3 = new JTable();
+		model3 = new DefaultTableModel();
+		Object[] column3 = {"Thursday"};
+		model3.setColumnIdentifiers(column3);
+		table_3.setModel(model3);
+		scrollPane_3.setViewportView(table_3);
+		
+		JScrollPane scrollPane_4 = new JScrollPane();
+		scrollPane_4.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane_4.setBounds(578, 10, 132, 400);
+		frame.getContentPane().add(scrollPane_4);
+		
+		table_4 = new JTable();		
+		model4 = new DefaultTableModel();
+		Object[] column4 = {"Friday"};
+		model4.setColumnIdentifiers(column4);
+		table_4.setModel(model4);
+		scrollPane_4.setViewportView(table_4);
+		
+		JScrollPane scrollPane_5 = new JScrollPane();
+		scrollPane_5.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane_5.setBounds(744, 10, 132, 400);
+		frame.getContentPane().add(scrollPane_5);
+		
+		table_5 = new JTable();
+		model5 = new DefaultTableModel();
+		Object[] column5 = {"Done"};
+		model5.setColumnIdentifiers(column5);
+		table_5.setModel(model5);
+		scrollPane_5.setViewportView(table_5);
+		
+		task = new JTextField();
+		task.setBounds(10, 461, 180, 19);
+		frame.getContentPane().add(task);
+		task.setColumns(10);
+		
+		JLabel lblNewLabel = new JLabel("New task:");
+		lblNewLabel.setBounds(10, 438, 66, 13);
+		lblNewLabel.setForeground(Color.WHITE);
+		frame.getContentPane().add(lblNewLabel);
+		
+		JRadioButton rdbtnMonday = new JRadioButton("Monday");
+		rdbtnMonday.setBounds(10, 486, 103, 21);
+		rdbtnMonday.setForeground(Color.WHITE);
+		rdbtnMonday.setBackground(Color.DARK_GRAY);
+		frame.getContentPane().add(rdbtnMonday);
+		
+		
+		JRadioButton rdbtnWednesday = new JRadioButton("Wednesday");
+		rdbtnWednesday.setBounds(10, 509, 103, 21);
+		rdbtnWednesday.setForeground(Color.WHITE);
+		rdbtnWednesday.setBackground(Color.DARK_GRAY);
+		frame.getContentPane().add(rdbtnWednesday);
+		
+		JRadioButton rdbtnFriday = new JRadioButton("Friday");
+		rdbtnFriday.setBounds(10, 532, 103, 21);
+		rdbtnFriday.setForeground(Color.WHITE);
+		rdbtnFriday.setBackground(Color.DARK_GRAY);
+		frame.getContentPane().add(rdbtnFriday);
+		
+		JRadioButton rdbtnTuesday = new JRadioButton("Tuesday");
+		rdbtnTuesday.setBounds(115, 486, 103, 21);
+		rdbtnTuesday.setForeground(Color.WHITE);
+		rdbtnTuesday.setBackground(Color.DARK_GRAY);
+		frame.getContentPane().add(rdbtnTuesday);
+		
+		JRadioButton rdbtnThursday = new JRadioButton("Thursday");
+		rdbtnThursday.setBounds(115, 509, 103, 21);
+		rdbtnThursday.setForeground(Color.WHITE);
+		rdbtnThursday.setBackground(Color.DARK_GRAY);
+		frame.getContentPane().add(rdbtnThursday);
+		
+		JRadioButton rdbtnAll = new JRadioButton("All");
+		rdbtnAll.setForeground(Color.WHITE);
+		rdbtnAll.setBackground(Color.DARK_GRAY);
+		rdbtnAll.setBounds(115, 532, 103, 21);
+		frame.getContentPane().add(rdbtnAll);
+		frame.setBounds(100, 100, 900, 700);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JButton btnNewButton = new JButton("Add");
+		btnNewButton.setBounds(10, 559, 85, 21);
+		btnNewButton.addActionListener(e -> {
+			update();
+			String task1 = task.getText();
+			if(!task1.equals("")) {
+				if(rdbtnAll.isSelected()) {
+					rdbtnAll.setSelected(false);
+					rdbtnAll.setSelected(false);
+					rdbtnMonday.setSelected(false);
+					rdbtnTuesday.setSelected(false);
+					rdbtnWednesday.setSelected(false);
+					rdbtnThursday.setSelected(false);
+					rdbtnFriday.setSelected(false);
+					
+					mondayList.add(task1);
+					tuesdayList.add(task1);
+					wednesdayList.add(task1);
+					thursdayList.add(task1);
+					fridayList.add(task1);
+					task.setText("");
+				}
+				if(rdbtnMonday.isSelected()) {
+					rdbtnMonday.setSelected(false);
+					row[0] = task1;
+					mondayList.add(task1);
+					task.setText("");
+				} 
+				if(rdbtnTuesday.isSelected()) {
+					rdbtnTuesday.setSelected(false);
+					row[0] = task1;
+					tuesdayList.add(task1);
+					task.setText("");
+				} 	
+				if(rdbtnWednesday.isSelected()) {
+					rdbtnWednesday.setSelected(false);
+					wednesdayList.add(task1);
+					task.setText("");
+				} 	
+				if(rdbtnThursday.isSelected()) {
+					rdbtnThursday.setSelected(false);
+					thursdayList.add(task1);
+					task.setText("");
+				} 	
+				if(rdbtnFriday.isSelected()) {
+					rdbtnFriday.setSelected(false);
+					fridayList.add(task1);
+					task.setText("");
+				}
+			} else {
+				JOptionPane.showMessageDialog(null, "Enter a task!");
+			}
+			update();	
+		});
+		frame.getContentPane().add(btnNewButton);
+		
+		JButton btnMove = new JButton("Clear");
+		btnMove.setBounds(105, 559, 85, 21);
+		btnMove.addActionListener(e -> {	
+			update();
+			if(rdbtnAll.isSelected() || rdbtnAll.isSelected() ||  rdbtnMonday.isSelected() 
+					|| rdbtnTuesday.isSelected() || 	rdbtnWednesday.isSelected()
+					|| rdbtnThursday.isSelected() || rdbtnFriday.isSelected()) {
+				if(rdbtnAll.isSelected()) {
+					rdbtnAll.setSelected(false);
+					rdbtnMonday.setSelected(false);
+					rdbtnTuesday.setSelected(false);
+					rdbtnWednesday.setSelected(false);
+					rdbtnThursday.setSelected(false);
+					rdbtnFriday.setSelected(false);
+					JOptionPane.showMessageDialog(null, "Can't select all");
+				}	
+				if(rdbtnMonday.isSelected()) {
+					rdbtnMonday.setSelected(false);
+					mondayList.clear();
+				} 	
+				if(rdbtnTuesday.isSelected()) {
+					rdbtnTuesday.setSelected(false);
+					tuesdayList.clear();
+				} 	
+				if(rdbtnWednesday.isSelected()) {
+					rdbtnWednesday.setSelected(false);
+					wednesdayList.clear();
+				} 	
+				if(rdbtnThursday.isSelected()) {
+					rdbtnThursday.setSelected(false);
+					thursdayList.clear();
+				} 	
+				if(rdbtnFriday.isSelected()) {
+					rdbtnFriday.setSelected(false);
+					fridayList.clear();
+				}
+				update();
+			} else {
+				JOptionPane.showMessageDialog(null, "Select something to clear!");
+			}
+
+		});
+		frame.getContentPane().add(btnMove);
+		
+		JButton btnNewButton_1 = new JButton("Done");
+		btnNewButton_1.addActionListener(e -> {
+			if(rdbtnAll.isSelected() || rdbtnAll.isSelected() ||  rdbtnMonday.isSelected() 
+					|| rdbtnTuesday.isSelected() || 	rdbtnWednesday.isSelected()
+					|| rdbtnThursday.isSelected() || rdbtnFriday.isSelected()) {
+				if(rdbtnAll.isSelected()) {
+					for(Object a:mondayList)
+						doneList.add(a);
+					for(Object b:tuesdayList)
+						doneList.add(b);
+					for(Object c:wednesdayList)
+						doneList.add(c);
+					for(Object d:thursdayList)
+						doneList.add(d);
+					for(Object f:fridayList)
+						doneList.add(f);
+					
+					mondayList.clear();
+					tuesdayList.clear();
+					wednesdayList.clear();
+					thursdayList.clear();
+					fridayList.clear();
+					
+					int mon = model.getRowCount();
+					for(int i = 0; i > 0; i++)
+						model.removeRow(1);
+					int tue = model1.getRowCount();
+					for(int i = 0; i > 0; i++)
+						model1.removeRow(1);
+					int wed = model2.getRowCount();
+					for(int i = 0; i > 0; i++)
+						model2.removeRow(1);
+					int thu = model3.getRowCount();
+					for(int i = 0; i > 0; i++)
+						model3.removeRow(1);
+					int fri = model4.getRowCount();
+					for(int i = 0; i > 0; i++)
+						model4.removeRow(1);
+					
+					update();
+					
+					} 	
+				if(rdbtnMonday.isSelected()) {
+					int i = table.getSelectedRow();
+					if(i >= 0) {
+						rdbtnMonday.setSelected(false);
+						doneList.add(mondayList.get(i));
+						mondayList.remove(i);
+						model.removeRow(i);
+						update();
+					}
+				} 	
+				if(rdbtnTuesday.isSelected()) {
+					int i = table_1.getSelectedRow();
+					if(i >= 0) {
+						rdbtnTuesday.setSelected(false);
+						doneList.add(tuesdayList.get(i));
+						tuesdayList.remove(i);
+						model1.removeRow(i);
+						update();
+					}
+				} 	
+				if(rdbtnWednesday.isSelected()) {
+					int i = table_2.getSelectedRow();
+					if(i >= 0) {
+						rdbtnWednesday.setSelected(false);
+						doneList.add(wednesdayList.get(i));
+						wednesdayList.remove(i);
+						model2.removeRow(i);
+						update();
+					}
+				} 	
+				if(rdbtnThursday.isSelected()) {
+					int i = table_3.getSelectedRow();
+					if(i >= 0) {
+						rdbtnThursday.setSelected(false);
+						doneList.add(thursdayList.get(i));
+						thursdayList.remove(i);
+						model3.removeRow(i);
+						update();
+					}
+				}
+					if(rdbtnFriday.isSelected()) {
+					int i = table_4.getSelectedRow();
+					if(i >= 0) {
+						rdbtnFriday.setSelected(false);
+						doneList.add(fridayList.get(i));
+						fridayList.remove(i);
+						model4.removeRow(i);
+						update();
+					}
+				}
+			} else
+				JOptionPane.showMessageDialog(null, "Select row and a weekday first!");
+		});
+		btnNewButton_1.setBounds(10, 586, 85, 21);
+		frame.getContentPane().add(btnNewButton_1);
+		
+		JButton btnNewButton_2 = new JButton("Update");
+		btnNewButton_2.addActionListener(e -> {
+			update();
+			JOptionPane.showMessageDialog(null, "Updated!");
+		});
+		btnNewButton_2.setBounds(105, 586, 85, 21);
+		frame.getContentPane().add(btnNewButton_2);
+		
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setEnabled(false);
+		progressBar.setFocusable(false);
+		progressBar.setStringPainted(true);
+		progressBar.setToolTipText("Loading");
+		progressBar.setForeground(Color.GREEN);
+		progressBar.setBounds(436, 420, 440, 19);
+		progressBar.setValue(100);
+		frame.getContentPane().add(progressBar);
+		
+		JLabel lblNewLabel_6 = new JLabel("by Jonas H\u00E4ring");
+		lblNewLabel_6.setForeground(Color.WHITE);
+		lblNewLabel_6.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		lblNewLabel_6.setBounds(796, 618, 80, 13);
+		frame.getContentPane().add(lblNewLabel_6);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
+		
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+		
+		JMenuItem menuItemLoad = new JMenuItem("Load");
+		menuItemLoad.addActionListener(e -> {
+			try {
+				progressBar.setValue(0);
+				
+				FileInputStream fis = new FileInputStream("save.dat");
+				BufferedInputStream bis = new BufferedInputStream(fis);
+				ObjectInputStream ois = new ObjectInputStream(bis);
+				
+				DataStorage dStorage = (DataStorage)ois.readObject();
+				
+				mondayList = dStorage.saveMonday;
+				tuesdayList = dStorage.saveTuesday;
+				wednesdayList = dStorage.saveWednesday;
+				progressBar.setValue(50);
+				thursdayList = dStorage.saveThursday;
+				fridayList = dStorage.saveFriday;
+				doneList = dStorage.saveDone;
+				
+				ois.close();
+				
+				update();
+				
+				progressBar.setValue(100);
+				JOptionPane.showMessageDialog(null, "Successfully loaded!");
+				
+			} catch(IOException | ClassNotFoundException ex) {
+				ex.printStackTrace();
+			}
+		});
+		fileMenu.add(menuItemLoad);
+		
+		JMenuItem menuItemSave = new JMenuItem("Save");		
+		menuItemSave.addActionListener(e -> {	
+			try {
+				
+				update();
+				
+				FileOutputStream fos = new FileOutputStream("save.dat");
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				ObjectOutputStream oos = new ObjectOutputStream(bos);
+				
+				DataStorage dStorage = new DataStorage();
+					
+				dStorage.saveDone = doneList;
+				dStorage.saveMonday = mondayList;
+				dStorage.saveTuesday = tuesdayList;
+				dStorage.saveWednesday = wednesdayList;
+				dStorage.saveThursday = thursdayList;
+				dStorage.saveFriday = fridayList;
+				
+				oos.writeObject(dStorage);
+				oos.close();
+				
+				JOptionPane.showMessageDialog(null, "Successfully saved!");
+
+			
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		});
+		fileMenu.add(menuItemSave);
+		
+		
+
+	}
+	
+	public void update() {
+		model.getDataVector().removeAllElements();
+		model1.getDataVector().removeAllElements();
+		model2.getDataVector().removeAllElements();
+		model3.getDataVector().removeAllElements();
+		model4.getDataVector().removeAllElements();
+		model5.getDataVector().removeAllElements();
+		
+		for(Object a:mondayList) {
+			row[0] = a.toString();
+			model.addRow(row);
+		}
+		for(Object a:tuesdayList) {
+			row[0] = a.toString();
+			model1.addRow(row);
+		}
+		for(Object a:wednesdayList) {
+			row[0] = a.toString();
+			model2.addRow(row);
+		}
+		for(Object a:thursdayList) {
+			row[0] = a.toString();
+			model3.addRow(row);
+		}
+		for(Object a:fridayList) {
+			row[0] = a.toString();
+			model4.addRow(row);
+		}
+		for(Object a:doneList) {
+			row[0] = a.toString();
+			model5.addRow(row);
+		}
+	}
+}
