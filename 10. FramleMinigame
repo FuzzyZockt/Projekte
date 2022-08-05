@@ -1,1 +1,197 @@
+import java.awt.Color;
+import java.awt.EventQueue;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
+import javax.swing.JButton;
+
+public class GUI_Framle {
+
+	private JFrame frame;
+	private JTextField textField;
+	private JTable table;
+	private static DefaultTableModel model;
+	private static Object row[];
+	private static ArrayList<Frame> frameList;
+	private static int rngNbr;
+	private static boolean a;
+
+
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GUI_Framle window = new GUI_Framle();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+	public GUI_Framle() {
+		initialize();
+	}
+
+
+	private void initialize() {	
+		
+		frame = new JFrame("Framle");
+		frame.setBounds(100, 100, 337, 600);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		row = new Object[4];
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setFocusable(false);
+		scrollPane.setAutoscrolls(true);
+		scrollPane.setBorder(new LineBorder(new Color(0, 0, 0)));
+		scrollPane.setBounds(10, 42, 300, 508);
+		frame.getContentPane().add(scrollPane);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 11, 110, 20);
+		frame.getContentPane().add(textField);
+		frame.getContentPane().setBackground(Color.DARK_GRAY);
+		textField.setColumns(10);
+		
+		table = new JTable();
+		model = new DefaultTableModel();
+		Object[] column1 = {"Name", "Year", "Gender", "Element"};
+		model.setColumnIdentifiers(column1);
+		table.setModel(model);
+		scrollPane.setViewportView(table);
+		
+		JButton btnNewButton = new JButton("Submit");
+		btnNewButton.setBounds(130, 8, 89, 23);
+		frame.getContentPane().add(btnNewButton);
+		
+		frameList = new ArrayList<Frame>();
+		fillArrayList();
+		rngNbr = (int) (Math.random() * (frameList.size() - 1));
+		
+		
+		btnNewButton.addActionListener(e -> {
+			String input = textField.getText();
+			textField.setText("");
+				
+			if(input != frameList.get(rngNbr).name) {
+
+				for(int i = 0; i < frameList.size(); i++) {
+					if(input.equals(frameList.get(i).name)) {
+						row[0] = frameList.get(i).name;
+						row[1] = frameList.get(i).year;
+						row[2] = frameList.get(i).sex;
+						row[3] = frameList.get(i).element;
+						model.addRow(row);
+						
+						if(frameList.get(rngNbr).name.equals(frameList.get(i).name))
+							row[0] = "Correct";
+						else
+							row[0] = "Wrong";
+						
+						if(frameList.get(rngNbr).year > frameList.get(i).year)
+							row[1] = "Younger";
+						else if(frameList.get(rngNbr).year < frameList.get(i).year)
+							row[1] = "Older" ;
+						else
+							row[1] = "Correct";
+						
+						
+						
+						if(frameList.get(rngNbr).sex.equals(frameList.get(i).sex))
+							row[2] = "Correct";
+						else
+							row[2] = "Wrong";
+						
+						
+							
+						if(frameList.get(rngNbr).element.equals(frameList.get(i).element))
+							row[3] = "Correct";
+						else
+							row[3] = "Wrong";
+						
+						a = true;
+						model.addRow(row);
+						Arrays.fill(row, "---");
+						model.addRow(row);
+						}
+				}
+					if(input.equals(frameList.get(rngNbr).name)) {
+						JOptionPane.showMessageDialog(null,"Right guess!\nCongratulation!");
+						
+						}
+					
+				
+				if(!a) {
+					System.out.println("Not an existing Frame!");
+					a = false;
+				}
+			}
+		});
+	}
+
+public static void fillArrayList() {
+	frameList.add(new Frame("Excalibur", 2012, "Electricity", "male"));
+	frameList.add(new Frame("Trinity", 2012, "Cold", "female"));
+	frameList.add(new Frame("Ember", 2012, "Heat", "female"));
+	frameList.add(new Frame("Loki", 2012, "Radiation", "male"));
+	frameList.add(new Frame("Mag", 2012, "Magnetic", "female"));
+	frameList.add(new Frame("Rhino", 2012, "Impact", "male"));
+	frameList.add(new Frame("Volt", 2012, "Electricity", "male"));
+	frameList.add(new Frame("Ash", 2012, "Radiation", "male"));
+	frameList.add(new Frame("Frost", 2013, "Cold", "male"));
+	frameList.add(new Frame("Nyx", 2013, "Radiation", "female"));
+	frameList.add(new Frame("Banshee", 2013, "Electricity", "female"));
+	frameList.add(new Frame("Saryn", 2013, "Toxin", "female"));
+	frameList.add(new Frame("Vauban", 2013, "Heat", "male"));
+	frameList.add(new Frame("Nova", 2013, "Electricity", "female"));
+	frameList.add(new Frame("Nekros", 2013, "Toxin", "male"));
+	frameList.add(new Frame("Valkyr", 2013, "Electricity", "female"));
+	frameList.add(new Frame("Oberon", 2013, "Toxin", "male"));
+	frameList.add(new Frame("Zephyr", 2014, "Impact", "female"));
+	frameList.add(new Frame("Hydroid", 2014, "Magnetic", "male"));
+	frameList.add(new Frame("Mirage", 2014, "Radiation", "female"));
+	frameList.add(new Frame("Limbo	", 2014, "Electricity	", "male"));
+	frameList.add(new Frame("Mesa", 2014, "Magnetic", "female"));
+	frameList.add(new Frame("Chroma", 2015, "Heat", "male"));
+	frameList.add(new Frame("Equinox", 2015, "Radiation", "female"));
+	frameList.add(new Frame("Atlas", 2015, "Toxin", "male"));
+	frameList.add(new Frame("Wukong", 2015, "Impact", "male"));
+	frameList.add(new Frame("Ivara", 2015, "Toxin", "female"));
+	frameList.add(new Frame("Nezha", 2015, "Heat", "male"));
+	frameList.add(new Frame("Inaros", 2016, "Heat", "male"));
+	frameList.add(new Frame("Titania", 2016, "Cold", "female"));
+	frameList.add(new Frame("Nidus", 2016, "Toxin", "male"));
+	frameList.add(new Frame("Octavia", 2017, "Radiation", "female"));
+	frameList.add(new Frame("Harrow", 2017, "Magnetic", "male"));
+	frameList.add(new Frame("Gara", 2017, "Cold", "female"));
+	frameList.add(new Frame("Khora", 2018, "Toxin", "female"));
+	frameList.add(new Frame("Excalibur Umbra", 2018, "Electricity", "male"));
+	frameList.add(new Frame("Revenant", 2018, "Cold", "male"));
+	frameList.add(new Frame("Garuda", 2018, "Radiation", "female"));
+	frameList.add(new Frame("Baruuk", 2018, "Impact", "male"));
+	frameList.add(new Frame("Hildryn", 2019, "Cold", "female"));
+	frameList.add(new Frame("Wisp", 2019, "Heat", "female"));
+	frameList.add(new Frame("Gauss", 2019, "Impact", "male"));
+	frameList.add(new Frame("Grendel", 2019, "Impact", "male"));
+	frameList.add(new Frame("Protea", 2020, "Heat", "female"));
+	frameList.add(new Frame("Xaku", 2020, "Magnetic", "male"));
+	frameList.add(new Frame("Lavos", 2020, "Magnetic", "male"));
+	frameList.add(new Frame("Sevagoth", 2021, "Impact", "male"));
+	frameList.add(new Frame("Yareli", 2021, "Magnetic", "female"));
+	frameList.add(new Frame("Caliban", 2021, "Electricity", "male"));
+	frameList.add(new Frame("Gyre", 2022, "Electricity", "female"));
+	}
+}
 
