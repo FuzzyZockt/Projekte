@@ -1,0 +1,187 @@
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class MidiTest {
+
+	private JFrame frame;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MidiTest window = new MidiTest();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public MidiTest() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+	    int maxVolume = 50;
+	    int sound = 50;
+
+		frame = new JFrame();
+		frame.setBounds(100, 100, 461, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		
+		JButton btnNewButton = new JButton("C");
+		btnNewButton.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton.setBounds(10, 11, 44, 239);
+		frame.getContentPane().add(btnNewButton);
+		
+		JButton btnD = new JButton("D");
+		btnD.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 2, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 2);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnD.setBounds(64, 11, 44, 239);
+		frame.getContentPane().add(btnD);
+		
+		JButton btnE = new JButton("E");
+		btnE.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 4, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 4);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnE.setBounds(118, 11, 44, 239);
+		frame.getContentPane().add(btnE);
+		
+		JButton btnNewButton_3 = new JButton("F");
+		btnNewButton_3.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 5, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 5);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton_3.setBounds(172, 11, 44, 239);
+		frame.getContentPane().add(btnNewButton_3);
+		
+		JButton btnNewButton_4 = new JButton("G");
+		btnNewButton_4.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 7, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 7);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton_4.setBounds(226, 11, 44, 239);
+		frame.getContentPane().add(btnNewButton_4);
+		
+		JButton btnNewButton_5 = new JButton("A");
+		btnNewButton_5.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 9, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 9);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton_5.setBounds(280, 11, 44, 239);
+		frame.getContentPane().add(btnNewButton_5);
+		
+		JButton btnNewButton_6 = new JButton("H");
+		btnNewButton_6.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 11, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 11);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton_6.setBounds(334, 11, 44, 239);
+		frame.getContentPane().add(btnNewButton_6);
+		
+		JButton btnNewButton_7 = new JButton("C");
+		btnNewButton_7.addActionListener(e -> {
+			try {
+			    Synthesizer synthesizer;
+				synthesizer = MidiSystem.getSynthesizer();
+				synthesizer.open();
+				MidiChannel channel = synthesizer.getChannels()[2];
+			      channel.noteOn(sound + 12, maxVolume);
+			      Thread.sleep(600);
+			      channel.noteOff(sound + 12);
+			} catch (MidiUnavailableException | InterruptedException e1) {
+				e1.printStackTrace();
+			}
+		});
+		btnNewButton_7.setBounds(390, 11, 44, 239);
+		frame.getContentPane().add(btnNewButton_7);
+	}
+}
