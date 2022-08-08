@@ -1,42 +1,12 @@
- import java.awt.EventQueue;
-import javax.swing.JFrame;
-import java.awt.Color;
-import javax.swing.JComboBox;
-import java.awt.BorderLayout;
-import javax.swing.JToggleButton;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPasswordField;
-import javax.swing.JLabel;
-import javax.swing.JRadioButton;
-import javax.swing.DropMode;
-import javax.swing.JButton;
-import javax.swing.JTree;
-import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.awt.event.ActionEvent;
-import javax.swing.JSpinner;
-import javax.swing.JSlider;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JMenu;
-import javax.swing.border.CompoundBorder;
+package gc.joh.projekte.Test;
+
+
+import java.awt.*;
+import javax.swing.*;
 import javax.swing.border.LineBorder;
-import javax.swing.JProgressBar;
-import java.awt.Font;
+import javax.swing.table.DefaultTableModel;
+import java.io.*;
+import java.util.*;
 
 public class Todo {
 
@@ -102,6 +72,10 @@ public class Todo {
 		
 		table = new JTable();
 		model = new DefaultTableModel();
+		Object[] column = {"Monday"};
+		model.setColumnIdentifiers(column);
+		table.setModel(model);
+		scrollPane.setViewportView(table);
 
 		scrollPane.setViewportView(table);
 		
@@ -542,4 +516,9 @@ public class Todo {
 			model5.addRow(row);
 		}
 	}
+}
+
+class DataStorage implements Serializable{
+	
+	ArrayList saveMonday, saveTuesday, saveWednesday, saveThursday, saveFriday, saveDone;
 }
