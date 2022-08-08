@@ -1,0 +1,23 @@
+import java.util.Random;
+
+public class raondomGen {
+
+	public static void main(String[] args) {
+		int rng = 0;
+		int zeroOrOne = 0;
+		boolean trueOrFalse = false;
+		char rcg = 'a';
+		Random r = new Random();
+		
+		for (int j = 0; j < 10; j++) {
+			rng = (int) (Math.random() * 10);
+			rcg = (char) (r.nextInt(26) + 'a');
+			zeroOrOne = (int) (Math.random() * 2);
+			
+			if (zeroOrOne == 0)
+				trueOrFalse = false;
+			else
+				trueOrFalse = true;
+		}
+	}
+}
